@@ -184,6 +184,17 @@ module incen #(parameter WIDTH = 8)
 	end
 endmodule
 
+// dekrement sa enable
+module decen #(parameter WIDTH = 8)
+		(input logic [WIDTH-1:0] a, b,
+		input logic clk,
+		output logic [WIDTH-1:0] y);	
+	always @(posedge clk)
+	begin
+		y = a - 1;
+	end
+endmodule
+
 // modul za izvrsavanje pomeracke funkcije
 module shift #(parameter WIDTH = 8)
 		(input logic [WIDTH-1:0] a,
@@ -218,7 +229,7 @@ module shift #(parameter WIDTH = 8)
 		endcase
 	end
 endmodule
-
+/*
 module stek #(parameter WIDTH = 8)
 		(input logic [WIDTH-1:0] a,
 		input logic [1:0] con,
@@ -250,4 +261,4 @@ module stek #(parameter WIDTH = 8)
 			end
 		endcase
 	end
-endmodule
+endmodule*/

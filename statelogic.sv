@@ -14,15 +14,44 @@ module statelogic(input logic 		clk, reset,
 				  output logic [5:0] state);
 	
 	logic [5:0] nextstate;
-	
+
+	logic [5:0] JMP = 6'b001_001;
+	logic [5:0] BEQL = 6'b010_000;
+	logic [5:0] BNEQL = 6'b010_001;
+	logic [5:0] LOAD = 6'b100_000;
+	logic [5:0] REGLOAD = 6'b100_001;
+	logic [5:0] POP = 6'b100_100;
+	logic [5:0] PUSH = 6'b100_110;
+	logic [5:0] ADD = 6'b110_000;
+	logic [5:0] SUB = 6'b110_001;
+	logic [5:0] INC = 6'b110_010;
+	logic [5:0] DEC = 6'b110_011;
+	logic [5:0] AND = 6'b110_100;
+	logic [5:0] OR = 6'b110_101;
+	logic [5:0] XOR = 6'b110_110;
+	logic [5:0] NOT = 6'b110_111;
+	logic [5:0] ASR = 6'b111_000;
+	logic [5:0] LSR = 6'b111_001;
+	logic [5:0] ASL = 6'b111_100;
+	logic [5:0] LSL = 6'b111_101;
+
+	logic [2:0] REGDIR = 3'b000;
+	logic [2:0] MEMDIR = 3'b010;
+	logic [2:0] PCREL = 3'b110;
+	logic [2:0] IMMED = 3'b111;
+
+	logic jedanBajt = 0;
+	logic dvaBajta = 0;
+
 	always @(posedge clk)
 		if (reset) begin 
-			state <= 6'd1;
+			state <= 6'd0;
 			$display("State = FETCH1r");
 		end
 		else begin 
 			state <= nextstate;
 			case(state)
+				6'd0: $display("setting SP");
 				6'd1: $display("NEW STATE = FETCH1");
 				6'd2: $display("NEW STATE = FETCH2");
 				6'd3: $display("NEW STATE = FETCH3");
@@ -44,25 +73,29 @@ module statelogic(input logic 		clk, reset,
 				6'd24: $display("NEW STATE = POP");
 				6'd25: $display("NEW STATE = PUSH");
 				6'd31: $display("NEW STATE = END OF PROGRAM");
-				default: $display("NEW STATE = UNKNOWN");
+				//default: $display("NEW STATE = UNKNOWN");
 			endcase
 		end
 	
 	always @(posedge clk)
 	  begin
 		case (state)
-			6'd0: nextstate = 6'd1;
+			6'd0: nextstate = 6'd2; 
+			/*----- FETCH1------ */
 			6'd1: nextstate = 6'd2; 
+			/*----- FETCH2------ */
 			6'd2: nextstate = 6'd3;
+			/*----- FETCH3------ */
 			6'd3: nextstate = 6'd4;
+			/*----- FETCH4------ */
 			6'd4: nextstate = 6'd5;
 			6'd5: 
 			begin	
 				/* dekodiranje funkcije izvrsavanja*/
 				case(op)
 					6'b000_000: nextstate = 6'd28;
-					6'b001_001: nextstate = 6'd21;
-					6'b010_000: 
+					JMP: nextstate = 6'd21;
+					BEQL: 
 					begin
 						/* jump if zero */
 						case(zero)
@@ -70,7 +103,7 @@ module statelogic(input logic 		clk, reset,
 							1'b1: nextstate = 6'd22;
 						endcase
 					end
-					6'b010_001:	
+					BNEQL:	
 					begin
 						/* jump if not zero */
 						case(zero)
@@ -78,34 +111,35 @@ module statelogic(input logic 		clk, reset,
 							1'b1: nextstate = 6'd32;
 						endcase
 					end	
-					6'b100_000: nextstate = 6'd7;
-					6'b100_001: nextstate = 6'd28;
-					6'b100_100: nextstate = 6'd24;
-					6'b100_110: nextstate = 6'd25;
-					6'b110_000: nextstate = 6'd6;
-					6'b110_001: nextstate = 6'd6;
-					6'b110_010: nextstate = 6'd6;
-					6'b110_011: nextstate = 6'd6;
-					6'b110_100: nextstate = 6'd6;
-					6'b110_101: nextstate = 6'd6;
-					6'b110_110: nextstate = 6'd6;
-					6'b110_111: nextstate = 6'd6;
-					6'b111_000: nextstate = 6'd17;
-					6'b111_001: nextstate = 6'd18;
-					6'b111_100: nextstate = 6'd19;
-					6'b111_101: nextstate = 6'd20;
+					LOAD: nextstate = 6'd7;
+					REGLOAD: nextstate = 6'd28;
+					POP: nextstate = 6'd24;
+					PUSH: nextstate = 6'd25;
+					ADD: nextstate = 6'd6;
+					SUB: nextstate = 6'd6;
+					INC: nextstate = 6'd6;
+					DEC: nextstate = 6'd6;
+					AND: nextstate = 6'd6;
+					OR: nextstate = 6'd6;
+					XOR: nextstate = 6'd6;
+					NOT: nextstate = 6'd6;
+					ASR: nextstate = 6'd17;
+					LSR: nextstate = 6'd18;
+					ASL: nextstate = 6'd19;
+					LSL: nextstate = 6'd20;
+					/* kraj ali ovo se ne koristi vise */
 					6'b111_111: nextstate = 6'd31;
 					default: nextstate = 6'd32;
 				endcase
 			end
 			6'd6:
 			begin
-				/* dekodiranje adresiranja */
+				/* dekodiranje nacina adresiranja */
 				case(funct)
-					3'b000: nextstate = 6'd9;
-					3'b010: nextstate = 6'd10;
-					3'b110: nextstate = 6'd12;
-					3'b111: nextstate = 6'd8;
+					REGDIR: nextstate = 6'd9;
+					MEMDIR: nextstate = 6'd10;
+					PCREL: nextstate = 6'd12;
+					IMMED: nextstate = 6'd8;
 					default: nextstate = 6'd8;
 				endcase
 			end
@@ -197,11 +231,21 @@ module statelogic(input logic 		clk, reset,
 			6'd24:
 			begin
 				/* POP */
-				nextstate = 6'd32;
+				nextstate = 6'd26;
 			end
 			6'd25:
 			begin
 				/* PUSH */
+				nextstate = 6'd27;
+			end
+			6'd26:
+			begin
+				/* POP 2 */
+				nextstate = 6'd32;
+			end
+			6'd27:
+			begin
+				/* PUSH 2 */
 				nextstate = 6'd32;
 			end
 			6'd28: nextstate = 6'd32;

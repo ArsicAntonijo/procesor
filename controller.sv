@@ -11,10 +11,10 @@ module controller(input logic 		 clk, reset,
 				  input logic [5:0]  op, 
 				  input logic [2:0] funct,
 				  input logic 		 zero,
-				  output  		 memread, memwrite,
-				  output  		 memtoreg, iord, bckAB, pcen,
+				  output  		 memread, memwrite, wrCPU,
+				  output  		 memtoreg, iord, bckAB, ldSP, pcen,
 				  output  		 regwrite, regdst, ldAB, ldBB,
-				  output   [1:0] adrend, adrsrc, pcsrc, alusrca, alusrcb, stekSRC,
+				  output   [1:0] adrend, adrsrc, pcsrc, alusrca, alusrcb, stekSRC, srcmdr,
 				  output   [2:0] shiftsrc, alucontrol,
 				  output   [3:0] irwrite);
 	
@@ -26,9 +26,9 @@ module controller(input logic 		 clk, reset,
 	statelogic statelog(clk, reset, op, funct, zero, state);
 	
 	outputlogic outputlog(state, memread, memwrite,
-			memtoreg, iord, bckAB,
-			regwrite, regdst, ldAB, ldBB, adrend, adrsrc, pcsrc, alusrca, alusrcb, stekSRC, irwrite,
-			pcwrite, aluop, branch, shiftsrc);
+			memtoreg, iord, bckAB, ldSP,
+			regwrite, regdst, ldAB, ldBB, adrend, adrsrc, pcsrc, alusrca, alusrcb, stekSRC, srcmdr, irwrite,
+			pcwrite, wrCPU, aluop, branch, shiftsrc);
 	
 	// other control decoding
 	aludec ac(aluop, op, alucontrol);

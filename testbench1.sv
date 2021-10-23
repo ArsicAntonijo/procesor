@@ -13,16 +13,16 @@ module testbench1 #(parameter WIDTH = 8, REGBITS = 3)();
 	
 	logic 			  clk;
 	logic 			  reset;
-	wire 			  memread, memwrite;
-	wire [WIDTH-1:0] adr, writedata;
+	wire 			  memread, memwrite, kraj;
+	wire [WIDTH-1:0] mar, writedata;
 	wire [WIDTH-1:0] memdata;
 	
 	// instantiate devices to be tested
 	mips #(WIDTH,REGBITS) dut(clk, reset, memdata, memread,
-							  memwrite, adr, writedata);
+							  memwrite, mar, writedata);
 	
 	// external memory for code and data
-	exmemory #(WIDTH) exmem(clk, memread, memwrite, adr, writedata, memdata, kraj);
+	exmemory #(WIDTH) exmem(clk, memread, memwrite, mar, writedata, memdata, kraj);
 	
 	// initialize test
 	initial
@@ -35,28 +35,31 @@ module testbench1 #(parameter WIDTH = 8, REGBITS = 3)();
 			clk <= 1; # 5; clk <= 0; # 5;
 		end
 		
-	always @(negedge clk)
+	always @(posedge clk)
 	begin
 		if (memread)
 		begin
-			//$display("MemRead: Adr=%h:Data=%h", adr, memdata);
+			//$display("MemRead: mar=%h:Data=%h", mar, memdata);
 		end
 		
 		if(memwrite)
-			//assert(adr == 76 & writedata == 7);
+			//assert(mar == 76 & writedata == 7);
 			begin
-				$display("Write: Adr=%d:Data=%d", adr, writedata);
+				$display("Write: mar=%d:Data=%d", mar, writedata);
 				$display("Simulation completely successful");
-				$finish;
+				//$finish;
 			end
 		if(memwrite == 0)
 			begin 
+				//$display("Kraj je : %b, Memread : %b", kraj, memread);
 				//$display("Simulation failed");
-				//$display("Adr=%d:Data=%d",adr, writedata);
+				//$display("mar=%d:Data=%d",mar, writedata);
 				//$finish;
 			end
-		if(kraj == 1)
-			$finish;
+		if(kraj)
+			begin
+				$finish;
+			end
 	end
 	
 endmodule

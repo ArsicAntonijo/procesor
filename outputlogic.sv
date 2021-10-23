@@ -9,11 +9,11 @@
  */
 module outputlogic(input logic [5:0] state,
 				   output logic 		memread, memwrite,
-				   output logic			memtoreg, iord, bckAB,
+				   output logic			memtoreg, iord, bckAB, ldSP,
 				   output logic 		regwrite, regdst, ldAB, ldBB,
-				   output logic [1:0] 	adrend, adrsrc, pcsrc, alusrca, alusrcb, stekSRC,
+				   output logic [1:0] 	adrend, adrsrc, pcsrc, alusrca, alusrcb, stekSRC, srcmdr,
 				   output logic [3:0] 	irwrite,
-				   output logic 		pcwrite,
+				   output logic 		pcwrite, wrCPU,
 				   output logic [1:0] 	aluop, branch,
 				   output logic [2:0] shiftsrc);
 	always @(state)
@@ -32,8 +32,13 @@ module outputlogic(input logic [5:0] state,
 		shiftsrc = 3'b000;
 		bckAB = 0;
 		stekSRC = 2'b00;
-		
+		wrCPU = 0; srcmdr = 2'b00;
+		ldSP = 0;
 		case (state)
+			6'd0:
+			begin
+				ldSP = 1;
+			end
 			6'd1:
 			begin				
 				memread = 1;
@@ -176,16 +181,39 @@ module outputlogic(input logic [5:0] state,
 			6'd24:
 			begin
 				/* POP */
-				stekSRC = 2'b10;
+				/*stekSRC = 2'b10;
 				alusrca = 2'b11;
-				ldAB = 1;
+				ldAB = 1;*/
+
+				stekSRC = 2'b01;
+				ldSP = 1;
+				
+				adrsrc = 2'b11;
+				memread = 1;
 			end
 			6'd25:
 			begin
 				/* PUSH */
-				stekSRC = 2'b01;
+				//stekSRC = 2'b01;
+				adrsrc = 2'b11;
+				srcmdr = 2'b01;
+				wrCPU = 1;
+				memwrite = 1;
 			end
+			6'd26:
+			begin
+				/* POP part 2*/
+				alusrcb = 2'b01;
+				ldBB = 1;
+				ldAB = 1;
 
+			end
+			6'd27:
+			begin
+				/* PUSH part 2 */
+				stekSRC = 2'b10;
+				ldSP = 1;
+			end
 			
 			6'd28:
 			begin
@@ -207,7 +235,7 @@ module outputlogic(input logic [5:0] state,
 			6'd31:
 			begin
 				/* kraj programa */
-				memwrite = 1;
+				//kraj = 1;
 			end
 			6'd32:
 			begin
