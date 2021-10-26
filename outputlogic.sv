@@ -40,31 +40,31 @@ module outputlogic(input logic [5:0] state,
 				ldSP = 1;
 			end
 			6'd1:
-			begin				
+			begin			
 				memread = 1;
-				irwrite = 4'b0001;
+				irwrite = 4'b1000;
 				alusrcb = 2'b01;
 			end
 			6'd2:
 			begin
 				memread = 1;
-				irwrite = 4'b0010;
+				irwrite = 4'b0100;
 				alusrcb = 2'b01;
-				adrend = 2'b01;
+				//adrend = 2'b01;
 			end
 			6'd3:
 			begin
 				memread = 1;
-				irwrite = 4'b0100;
+				irwrite = 4'b0010;
 				alusrcb = 2'b01;
-				adrend = 2'b10;
+				//adrend = 2'b10;
 			end
 			6'd4:
 			begin
 				memread = 1;
 				irwrite = 4'b1000;
 				alusrcb = 2'b01;
-				adrend = 2'b11;
+				//adrend = 2'b11;
 			end
 			6'd5:
 			begin
@@ -238,6 +238,24 @@ module outputlogic(input logic [5:0] state,
 				//kraj = 1;
 			end
 			6'd32:
+			begin
+				/* inkrement pc brojac */
+				/*pcsrc = 2'b01;
+				pcwrite = 1;		*/		
+			end
+			6'd35:
+			begin
+				/* inkrement pc brojac */
+				pcsrc = 2'b01;
+				pcwrite = 1;				
+			end
+			6'd36:
+			begin
+				/* inkrement pc brojac */
+				pcsrc = 2'b01;
+				pcwrite = 1;				
+			end
+			6'd37:
 			begin
 				/* inkrement pc brojac */
 				pcsrc = 2'b01;

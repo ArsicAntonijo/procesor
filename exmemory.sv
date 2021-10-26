@@ -31,10 +31,10 @@ module exmemory #(parameter WIDTH = 8)
 	begin
 		if(memwrite)
 			case (mar[1:0])
-				2'b00: mem[mar[WIDTH-1:2]][7:0] <= writedata;
-				2'b01: mem[mar[WIDTH-1:2]][15:8] <= writedata;
-				2'b10: mem[mar[WIDTH-1:2]][23:16] <= writedata;
-				2'b11: mem[mar[WIDTH-1:2]][31:24] <= writedata;
+				2'b00: mem[mar[WIDTH-1:2]][31:24] <= writedata;
+				2'b01: mem[mar[WIDTH-1:2]][23:16] <= writedata;
+				2'b10: mem[mar[WIDTH-1:2]][15:8] <= writedata;
+				2'b11: mem[mar[WIDTH-1:2]][7:0] <= writedata;
 			endcase
 	end
 	assign word = mem[mar[WIDTH-1:2]];
@@ -43,20 +43,25 @@ module exmemory #(parameter WIDTH = 8)
 		if (memread)
 			begin 
 				case (mar[1:0])
-				2'b00: memdata = word[7:0];
-				2'b01: memdata = word[15:8];
-				2'b10: memdata = word[23:16];
-				2'b11: 
+				2'b00:
 				begin	
 					memdata = word[31:24];
-					if(memdata == 8'hff)
+					/*if(memdata == 8'hxx)
 					begin
 						kraj = 1;
-					end
+					end*/
 				end
+				2'b01: memdata = word[23:16];
+				2'b10: memdata = word[15:8]; 
+				2'b11: memdata = word[7:0];
+				
 				endcase
 				$display("MemRead: mar= %h, ByteSel=%h, MemData=%h", mar[WIDTH-1:2], mar[1:0], memdata);		
 			end	
+		if(word[31:0] == 32'hffffffff)
+		begin
+			kraj = 1;
+		end
 	end
 		
 endmodule

@@ -34,14 +34,12 @@ module statelogic(input logic 		clk, reset,
 	logic [5:0] LSR = 6'b111_001;
 	logic [5:0] ASL = 6'b111_100;
 	logic [5:0] LSL = 6'b111_101;
+	logic [5:0] STOP = 6'b111_111;
 
 	logic [2:0] REGDIR = 3'b000;
 	logic [2:0] MEMDIR = 3'b010;
 	logic [2:0] PCREL = 3'b110;
 	logic [2:0] IMMED = 3'b111;
-
-	logic jedanBajt = 0;
-	logic dvaBajta = 0;
 
 	always @(posedge clk)
 		if (reset) begin 
@@ -80,13 +78,13 @@ module statelogic(input logic 		clk, reset,
 	always @(posedge clk)
 	  begin
 		case (state)
-			6'd0: nextstate = 6'd2; 
+			6'd0: nextstate = 6'd1; 
 			/*----- FETCH1------ */
-			6'd1: nextstate = 6'd2; 
+			6'd1: nextstate = 6'd35;				
 			/*----- FETCH2------ */
-			6'd2: nextstate = 6'd3;
+			6'd2: nextstate = 6'd36;
 			/*----- FETCH3------ */
-			6'd3: nextstate = 6'd4;
+			6'd3: nextstate = 6'd37;
 			/*----- FETCH4------ */
 			6'd4: nextstate = 6'd5;
 			6'd5: 
@@ -127,8 +125,7 @@ module statelogic(input logic 		clk, reset,
 					LSR: nextstate = 6'd18;
 					ASL: nextstate = 6'd19;
 					LSL: nextstate = 6'd20;
-					/* kraj ali ovo se ne koristi vise */
-					6'b111_111: nextstate = 6'd31;
+					STOP: nextstate = 6'd31;
 					default: nextstate = 6'd32;
 				endcase
 			end
@@ -257,6 +254,30 @@ module statelogic(input logic 		clk, reset,
 				/* inkrement pc brojaca */
 				nextstate = 6'd1;
 			end
+			6'd35:
+			begin
+				//nextstate = 6'd2; 
+				case(op)
+					POP: nextstate = 6'd5;
+					PUSH: nextstate = 6'd5;
+					default: nextstate = 6'd2;
+				endcase
+			end
+			6'd36:
+				case(op)
+					JMP: nextstate = 6'd5;
+					BEQL: nextstate = 6'd5;
+					BNEQL: nextstate = 6'd5;
+					LOAD: nextstate = 6'd3;
+					default: 
+						begin 
+							case(funct)
+								REGDIR: nextstate = 6'd5;
+								default: nextstate = 6'd3;
+							endcase
+						end
+				endcase
+			6'd37: nextstate = 6'd5;
 			default: nextstate = 6'd1;
 				// should never happen
 		endcase

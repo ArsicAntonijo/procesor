@@ -64,8 +64,8 @@ module datapath #(parameter WIDTH = 8, REGBITS = 3)
 	mux2 mxVALUE(instr[15:8], mdr[7:0], 1'b0, instrValue);
 
 	/* formiranje adrese / MAR */
-	mux4 #(6) mxADR1(pc[5:0], instrValue[7:2], acumulatorAB[7:2], SP[7:2], adrsrc, mar[7:2]);
-	mux4 #(2) mxADR2(adrend, instrValue[1:0], acumulatorAB[1:0], SP[1:0], adrsrc, mar[1:0]);
+	mux4 #(8) mxADR1(pc, instrValue, acumulatorAB, SP, adrsrc, mar);
+	//mux4 #(2) mxADR2(pc[1:0], instrValue[1:0], acumulatorAB[1:0], SP[1:0], adrsrc, mar[1:0]);
 
 
 	/* pc counter */
@@ -75,10 +75,10 @@ module datapath #(parameter WIDTH = 8, REGBITS = 3)
 	flopenr #(WIDTH) pcreg(clk, reset, pcen, nextpc, pc);
 
 	/* formiranje operanda AB */
-	mux4 #(WIDTH) src1mux(acumulatorBB, aluout, shiftAB, alterAB, alusrca, mxAB);
+	mux4 #(WIDTH) src1mux(acumulatorBB, aluout, shiftAB, backupAB, alusrca, mxAB);
 	buffer b3(mxAB, ldAB, acumulatorAB);
 	buffer b7(acumulatorAB, bckAB, backupAB);
-	mux2 m21(backupAB, stekVAL, stekSRC[1], alterAB);
+	//mux2 m21(backupAB, stekVAL, stekSRC[1], alterAB);
 
 	/* formiranje operanda BB */
 	mux4 #(WIDTH) src2mux(rd2, mdr[7:0], pc,
@@ -94,9 +94,6 @@ module datapath #(parameter WIDTH = 8, REGBITS = 3)
 	buffer #(3) b6(instr[18:16], regwrite, wa);
 	regfile #(WIDTH,REGBITS) rf(clk, regwrite, ra1, ra2,
 		wa, wd, rd1, rd2);
-
-	/* stek */
-	//stek s2(acumulatorAB, stekSRC, clk, stekVAL);
 
 	/* modul za shiftanje */
 	shift s1(acumulatorAB, shiftsrc, clk, shiftAB);

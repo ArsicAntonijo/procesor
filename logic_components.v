@@ -229,36 +229,4 @@ module shift #(parameter WIDTH = 8)
 		endcase
 	end
 endmodule
-/*
-module stek #(parameter WIDTH = 8)
-		(input logic [WIDTH-1:0] a,
-		input logic [1:0] con,
-		input logic clk,
-		output logic [WIDTH-1:0] y);
-	logic [WIDTH-1:0] ARR [2**3-1:0];
-	integer i = 0;
 
-	always @(posedge clk)
-	begin
-		case(con)
-			2'b01:
-			begin
-				ARR[i] = a;
-				$display("i : %d , vrednost : %d", i, ARR[i]);
-				i = i + 1;
-			end
-			2'b10:
-			begin
-				if(i == 0)
-				begin
-					$display("Stek je prazan!");
-				end
-				else begin
-				i = i - 1;
-				y = ARR[i];
-				$display("i : %d , vrednost : %d", i, ARR[i]);			
-				end
-			end
-		endcase
-	end
-endmodule*/
