@@ -35,16 +35,21 @@ In this project supported types of addresing are:
 ### Explanation of logic in files
 
 1. testbench.sv
+
 This file represent the top module, in which the clock is started and the procesor and exmemory modules are implemented.
 
 2. exmemory.sv
+
 This file is used for writting and reading data from memory( in this case from memfile.dat).
 
 3. procesor.sv
+
 This file is module which represents the procesor. In this module controller and datapath are implemented.
 
 4. logic_components.v
+
 This is file where the basic logic gates and structures are created.
 
 5. datapath.sv, statelogic.sv, outputlogic.sv
+
 With the code of these files, the main flow of this project will be presented.
