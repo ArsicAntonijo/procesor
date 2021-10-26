@@ -23,4 +23,4 @@ NOTE: to run the project if yuo don't have installed icarius verilog you will ha
 ## Supported operations
 In this project, only operations for 8 bit values are supported. The supported operation are shown in picture below.
 
-![This is an image.](https://github.com/ArsicAntonijo/procesor/photos/supportedOperations.png)
+![This is an image.](https://github.com/ArsicAntonijo/procesor/blob/main/photos/supportedOperations.png)
