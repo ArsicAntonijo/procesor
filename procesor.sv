@@ -35,7 +35,7 @@ typedef enum logic [2:0] {
 	PCDIR =  3'b110,
 	IMMED =  3'b111} adrcode;*/
 
-module mips #(parameter WIDTH = 8, REGBITS = 3)
+module procesor #(parameter WIDTH = 8, REGBITS = 3)
 			 (input logic 			   clk, reset,
 			  input logic [WIDTH-1:0]  memdata,
 			  output 			   memread, memwrite,

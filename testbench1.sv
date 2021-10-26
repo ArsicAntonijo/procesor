@@ -18,7 +18,7 @@ module testbench1 #(parameter WIDTH = 8, REGBITS = 3)();
 	wire [WIDTH-1:0] memdata;
 	
 	// instantiate devices to be tested
-	mips #(WIDTH,REGBITS) dut(clk, reset, memdata, memread,
+	procesor #(WIDTH,REGBITS) dut(clk, reset, memdata, memread,
 							  memwrite, mar, writedata);
 	
 	// external memory for code and data
