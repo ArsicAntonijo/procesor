@@ -40,7 +40,7 @@ module datapath #(parameter WIDTH = 8, REGBITS = 3)
 */
 	incen i1(SP, 8'd0, clk, incSP);
 	decen d123(SP,8'd0,clk, decSP);
-	mux4 mxS(8'h68, decSP, incSP, 8'h68, stekSRC, tmpSP);
+	mux4 mxS(8'h2c, decSP, incSP, 8'h68, stekSRC, tmpSP);
 	flopen fSP(clk, ldSP, tmpSP, SP);
 	
 	// register file address fields

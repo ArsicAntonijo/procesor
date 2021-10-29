@@ -32,24 +32,9 @@ In this project supported types of addresing are:
 - PC relativеly
 - immed
 
-### Explanation of logic in files
+### Example
 
-1. testbench.sv
+memfile.dat constains data that procesor is goint to use in this example. The data is put in order that can be seen in the photo below. So when we clik on batch file and start the procesor, we can see in command prompt how the procesor is working and how the operations and states are executed.
 
-This file represent the top module, in which the clock is started and the procesor and exmemory modules are implemented.
+![This is an image.](https://github.com/ArsicAntonijo/procesor/blob/main/photos/primer.png)
 
-2. exmemory.sv
-
-This file is used for writting and reading data from memory( in this case from memfile.dat).
-
-3. procesor.sv
-
-This file is module which represents the procesor. In this module controller and datapath are implemented.
-
-4. logic_components.v
-
-This is file where the basic logic gates and structures are created.
-
-5. datapath.sv, statelogic.sv, outputlogic.sv
-
-With the code of these files, the main flow of this project will be presented.

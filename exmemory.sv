@@ -7,7 +7,7 @@
  * 
  * TODO: Add module documentation
  */
-// external memory accessed by MIPS
+// external memory accessed by procesor
 module exmemory #(parameter WIDTH = 8)
 				 (input logic 			   clk,
 				  input logic 			   memread,
@@ -43,14 +43,7 @@ module exmemory #(parameter WIDTH = 8)
 		if (memread)
 			begin 
 				case (mar[1:0])
-				2'b00:
-				begin	
-					memdata = word[31:24];
-					/*if(memdata == 8'hxx)
-					begin
-						kraj = 1;
-					end*/
-				end
+				2'b00: memdata = word[31:24];
 				2'b01: memdata = word[23:16];
 				2'b10: memdata = word[15:8]; 
 				2'b11: memdata = word[7:0];

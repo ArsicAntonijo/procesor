@@ -44,33 +44,33 @@ module statelogic(input logic 		clk, reset,
 	always @(posedge clk)
 		if (reset) begin 
 			state <= 6'd0;
-			$display("State = FETCH1r");
+			$display("starting ...");
 		end
 		else begin 
 			state <= nextstate;
 			case(state)
 				6'd0: $display("setting SP");
-				6'd1: $display("NEW STATE = FETCH1");
-				6'd2: $display("NEW STATE = FETCH2");
-				6'd3: $display("NEW STATE = FETCH3");
-				6'd4: $display("NEW STATE = FETCH4");
-				6'd5: $display("NEW STATE = DEKODIRANJE OPERACIJE");
-				6'd6: $display("NEW STATE = DEKODIRANJE ADRESE");
-				6'd7: $display("NEW STATE = LOAD");
-				6'd8: $display("NEW STATE = IMMED");
-				6'd9: $display("NEW STATE = REGDIR");
-				6'd10: $display("NEW STATE = MEMDIR");
-				6'd12: $display("NEW STATE = PC REL");
-				6'd17: $display("NEW STATE = ASR");
-				6'd18: $display("NEW STATE = LSR");
-				6'd19: $display("NEW STATE = ASL");
-				6'd20: $display("NEW STATE = LSL");
-				6'd21: $display("NEW STATE = JMP");
-				6'd22: $display("NEW STATE = JMP IF ZERO");
-				6'd23: $display("NEW STATE = JMP IF NOT ZERO");
-				6'd24: $display("NEW STATE = POP");
-				6'd25: $display("NEW STATE = PUSH");
-				6'd31: $display("NEW STATE = END OF PROGRAM");
+				6'd1: $display("FETCH1");
+				6'd2: $display("FETCH2");
+				6'd3: $display("FETCH3");
+				6'd4: $display("FETCH4");
+				6'd5: $display("DEKODIRANJE OPERACIJE");
+				6'd6: $display("DEKODIRANJE ADRESE");
+				6'd7: $display("ADRESSING = LOAD");
+				6'd8: $display("ADRESSING = IMMED");
+				6'd9: $display("ADRESSING = REGDIR");
+				6'd10: $display("ADRESSING = MEMDIR");
+				6'd12: $display("ADRESSING = PC REL");
+				6'd17: $display("OPERATION = ASR");
+				6'd18: $display("OPERATION = LSR");
+				6'd19: $display("OPERATION = ASL");
+				6'd20: $display("OPERATION = LSL");
+				6'd21: $display("OPERATION = JMP");
+				6'd22: $display("OPERATION = JMP IF ZERO");
+				6'd23: $display("OPERATION = JMP IF NOT ZERO");
+				6'd24: $display("OPERATION = POP");
+				6'd25: $display("OPERATION = PUSH");
+				6'd31: $display("OPERATION = END OF PROGRAM");
 				//default: $display("NEW STATE = UNKNOWN");
 			endcase
 		end
@@ -79,11 +79,11 @@ module statelogic(input logic 		clk, reset,
 	  begin
 		case (state)
 			6'd0: nextstate = 6'd1; 
-			/*----- FETCH1------ */
+			/*----- FETCH1 dohvatanje prvog bajta------ */
 			6'd1: nextstate = 6'd35;				
-			/*----- FETCH2------ */
+			/*----- FETCH2 dohvatanje drugog bajta------ */
 			6'd2: nextstate = 6'd36;
-			/*----- FETCH3------ */
+			/*----- FETCH3 dohvatanje treceg bajta------ */
 			6'd3: nextstate = 6'd37;
 			/*----- FETCH4------ */
 			6'd4: nextstate = 6'd5;
@@ -256,14 +256,20 @@ module statelogic(input logic 		clk, reset,
 			end
 			6'd35:
 			begin
-				//nextstate = 6'd2; 
+				//provera dali je potrebno da se dohvata josh jedan bajt 
 				case(op)
 					POP: nextstate = 6'd5;
 					PUSH: nextstate = 6'd5;
+					ASR: nextstate = 6'd5;
+					LSR: nextstate = 6'd5;
+					ASL: nextstate = 6'd5;
+					LSL: nextstate = 6'd5;
 					default: nextstate = 6'd2;
 				endcase
 			end
 			6'd36:
+			begin
+				//provera dali je potrebno da se dohvata josh jedan bajt 
 				case(op)
 					JMP: nextstate = 6'd5;
 					BEQL: nextstate = 6'd5;
@@ -272,11 +278,12 @@ module statelogic(input logic 		clk, reset,
 					default: 
 						begin 
 							case(funct)
-								REGDIR: nextstate = 6'd5;
+								REGDIR: nextstate = 6'd3;
 								default: nextstate = 6'd3;
 							endcase
 						end
 				endcase
+			end
 			6'd37: nextstate = 6'd5;
 			default: nextstate = 6'd1;
 				// should never happen
